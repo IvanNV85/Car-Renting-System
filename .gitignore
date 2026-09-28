@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Khác ###
+*.log
+*.class
+out/
+.DS_Store
+Thumbs.db
+.env
+application-local.properties
