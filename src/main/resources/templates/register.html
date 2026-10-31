@@ -1,341 +1,296 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout/main :: layout(~{::title}, ~{::#main-content}, ~{::#page-css}, ~{::#page-scripts})}">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng ký tài khoản - FU Car Renting System</title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            padding: 40px 15px;
-        }
-        .register-card {
-            max-width: 900px;
-            width: 100%;
-            background: #ffffff;
-            border-radius: 1.25rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
-            overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .register-header {
-            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-            color: #ffffff;
-            padding: 2rem 2rem 1.6rem;
-            text-align: center;
-        }
-        .brand-icon {
-            width: 55px;
-            height: 55px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        }
-        .form-section-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #1e293b;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #e2e8f0;
-            margin-bottom: 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .form-control:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.2);
-        }
-        .input-group-text {
-            background-color: #f8fafc;
-            border-color: #dee2e6;
-            color: #64748b;
-        }
-        .btn-register-custom {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            border: none;
-            padding: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            transition: all 0.2s ease;
-        }
-        .btn-register-custom:hover {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
-        }
-    </style>
+    <title>Đăng Ký Tài Khoản - FU Car Renting System</title>
+    <th:block id="page-css">
+        <style>
+            .register-card {
+                max-width: 920px;
+                width: 100%;
+                background: #ffffff;
+                border-radius: 1.25rem;
+                box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+                overflow: hidden;
+                border: 1px solid rgba(0, 0, 0, 0.06);
+            }
+
+            .register-header {
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                color: #ffffff;
+                padding: 2.2rem 2rem 1.8rem;
+                text-align: center;
+            }
+
+            .brand-icon {
+                width: 55px;
+                height: 55px;
+                background: rgba(255, 255, 255, 0.12);
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.6rem;
+                margin-bottom: 0.5rem;
+                color: #38bdf8;
+            }
+
+            .form-section-title {
+                font-size: 1.05rem;
+                font-weight: 700;
+                color: #1e293b;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid #e2e8f0;
+                margin-bottom: 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .input-group-text {
+                background-color: #f8fafc;
+                border-color: #dee2e6;
+                color: #64748b;
+            }
+        </style>
+    </th:block>
 </head>
+
 <body>
 
-<div class="register-card">
-    <!-- Header -->
-    <div class="register-header">
-        <div class="brand-icon">
-            <i class="bi bi-car-front-fill"></i>
-        </div>
-        <h4 class="fw-bold mb-1">Đăng Ký Tài Khoản Khách Hàng</h4>
-        <p class="mb-0 text-white-50 small">FU Car Renting System - Đặt xe nhanh chóng, an toàn và tiện lợi</p>
-    </div>
-
-    <!-- Body Form -->
-    <div class="p-4 p-md-5">
-
-        <form th:action="@{/register}" th:object="${registerRequest}" method="post" novalidate>
-            <!-- Thông báo lỗi tổng quát nếu có -->
-            <div th:if="${#fields.hasAnyErrors()}" class="alert alert-danger alert-dismissible fade show" role="alert">
-                <div class="d-flex align-items-center mb-1">
-                    <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
-                    <strong>Vui lòng kiểm tra lại các thông tin bên dưới:</strong>
+    <div id="main-content" class="container py-5 d-flex align-items-center justify-content-center">
+        <div class="register-card">
+            <!-- Header -->
+            <div class="register-header">
+                <div class="brand-icon">
+                    <i class="bi bi-car-front-fill"></i>
                 </div>
-                <ul class="mb-0 ps-4 small">
-                    <li th:each="err : ${#fields.allErrors()}" th:text="${err}">Lỗi nhập liệu</li>
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <h4 class="fw-bold mb-1">Đăng Ký Tài Khoản Khách Hàng</h4>
+                <p class="mb-0 text-white-50 small">FU Car Renting System - Đặt xe nhanh chóng, an toàn và tiện lợi</p>
             </div>
 
-            <div class="row g-4">
-                <!-- Cột 1: Thông tin tài khoản -->
-                <div class="col-12 col-md-6">
-                    <div class="form-section-title">
-                        <i class="bi bi-shield-lock-fill text-primary"></i>
-                        <span>1. Thông Tin Tài Khoản</span>
-                    </div>
+            <!-- Body Form -->
+            <div class="p-4 p-md-5">
+                <form th:action="@{/register}" th:object="${registerRequest}" method="post" novalidate>
 
-                    <!-- Tên tài khoản -->
-                    <div class="mb-3">
-                        <label for="accountName" class="form-label fw-semibold text-secondary small">Tên tài khoản (Username) <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                            <input type="text"
-                                   class="form-control"
-                                   id="accountName"
-                                   th:field="*{accountName}"
-                                   th:classappend="${#fields.hasErrors('accountName')} ? 'is-invalid' : ''"
-                                   placeholder="vd: nguyenvana"
-                                   required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('accountName')}" th:errors="*{accountName}"></div>
+                    <div class="row g-4">
+                        <!-- Cột 1: Thông tin tài khoản -->
+                        <div class="col-12 col-md-6">
+                            <div class="form-section-title">
+                                <i class="bi bi-shield-lock-fill text-primary"></i>
+                                <span>1. Thông Tin Tài Khoản</span>
+                            </div>
+
+                            <!-- Tên tài khoản -->
+                            <div class="mb-3">
+                                <label for="accountName" class="form-label fw-semibold text-secondary small">Tên tài
+                                    khoản (Username) <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+                                    <input type="text" class="form-control" id="accountName" th:field="*{accountName}"
+                                        th:classappend="${#fields.hasErrors('accountName')} ? 'is-invalid' : ''"
+                                        placeholder="vd: nguyenvana" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('accountName')}"
+                                        th:text="${#fields.errors('accountName')[0]}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="mb-3">
+                                <label for="email" class="form-label fw-semibold text-secondary small">Địa chỉ Email
+                                    <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email" th:field="*{email}"
+                                        th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                        placeholder="vd: an@gmail.com" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
+                                        th:errors="*{email}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Mật khẩu -->
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-semibold text-secondary small">Mật khẩu <span
+                                        class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
+                                    <input type="password" class="form-control" id="password" th:field="*{password}"
+                                        th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
+                                        placeholder="Tối thiểu 6 ký tự" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassBtn">
+                                        <i class="bi bi-eye" id="togglePassIcon"></i>
+                                    </button>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
+                                        th:errors="*{password}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Xác nhận mật khẩu -->
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label fw-semibold text-secondary small">Xác
+                                    nhận mật khẩu <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-check2-circle"></i></span>
+                                    <input type="password" class="form-control" id="confirmPassword"
+                                        th:field="*{confirmPassword}"
+                                        th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
+                                        placeholder="Nhập lại mật khẩu" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassBtn">
+                                        <i class="bi bi-eye" id="toggleConfirmPassIcon"></i>
+                                    </button>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}"
+                                        th:errors="*{confirmPassword}"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cột 2: Thông tin cá nhân & Giấy phép lái xe -->
+                        <div class="col-12 col-md-6">
+                            <div class="form-section-title">
+                                <i class="bi bi-person-lines-fill text-primary"></i>
+                                <span>2. Thông Tin Khách Hàng & GPLX</span>
+                            </div>
+
+                            <!-- Họ và tên -->
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label fw-semibold text-secondary small">Họ và tên
+                                    <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input type="text" class="form-control" id="fullName" th:field="*{fullName}"
+                                        th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
+                                        placeholder="vd: Nguyễn Văn A" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}"
+                                        th:errors="*{fullName}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Số điện thoại -->
+                            <div class="mb-3">
+                                <label for="mobile" class="form-label fw-semibold text-secondary small">Số điện thoại
+                                    <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                    <input type="tel" class="form-control" id="mobile" th:field="*{mobile}"
+                                        th:classappend="${#fields.hasErrors('mobile')} ? 'is-invalid' : ''"
+                                        placeholder="vd: 0912345678" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('mobile')}"
+                                        th:errors="*{mobile}"></div>
+                                </div>
+                            </div>
+
+                            <div class="row g-2">
+                                <!-- Ngày sinh -->
+                                <div class="col-sm-6 mb-3">
+                                    <label for="birthday" class="form-label fw-semibold text-secondary small">Ngày sinh
+                                        <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                        <input type="date" class="form-control" id="birthday" th:field="*{birthday}"
+                                            th:classappend="${#fields.hasErrors('birthday')} ? 'is-invalid' : ''"
+                                            required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('birthday')}"
+                                            th:errors="*{birthday}"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Số CCCD/CMND -->
+                                <div class="col-sm-6 mb-3">
+                                    <label for="identityCard" class="form-label fw-semibold text-secondary small">Số
+                                        CCCD/CMND <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                                        <input type="text" class="form-control" id="identityCard"
+                                            th:field="*{identityCard}"
+                                            th:classappend="${#fields.hasErrors('identityCard')} ? 'is-invalid' : ''"
+                                            placeholder="12 chữ số" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('identityCard')}"
+                                            th:errors="*{identityCard}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-2">
+                                <!-- Số GPLX -->
+                                <div class="col-sm-6 mb-3">
+                                    <label for="licenceNumber" class="form-label fw-semibold text-secondary small">Số
+                                        GPLX <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-award"></i></span>
+                                        <input type="text" class="form-control" id="licenceNumber"
+                                            th:field="*{licenceNumber}"
+                                            th:classappend="${#fields.hasErrors('licenceNumber')} ? 'is-invalid' : ''"
+                                            placeholder="Số giấy phép lái xe" required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('licenceNumber')}"
+                                            th:errors="*{licenceNumber}"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Ngày cấp GPLX -->
+                                <div class="col-sm-6 mb-3">
+                                    <label for="licenceDate" class="form-label fw-semibold text-secondary small">Ngày
+                                        cấp GPLX <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
+                                        <input type="date" class="form-control" id="licenceDate"
+                                            th:field="*{licenceDate}"
+                                            th:classappend="${#fields.hasErrors('licenceDate')} ? 'is-invalid' : ''"
+                                            required>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('licenceDate')}"
+                                            th:errors="*{licenceDate}"></div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
-                    <!-- Email -->
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-semibold text-secondary small">Địa chỉ Email <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                            <input type="email"
-                                   class="form-control"
-                                   id="email"
-                                   th:field="*{email}"
-                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                                   placeholder="vd: an@gmail.com"
-                                   required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
-                        </div>
+                    <!-- Submit Button -->
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary py-2 fw-semibold rounded-3 shadow-sm fs-6">
+                            <i class="bi bi-person-plus-fill me-1"></i> Hoàn Tất Đăng Ký Tài Khoản
+                        </button>
                     </div>
+                </form>
 
-                    <!-- Mật khẩu -->
-                    <div class="mb-3">
-                        <label for="password" class="form-label fw-semibold text-secondary small">Mật khẩu <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-key-fill"></i></span>
-                            <input type="password"
-                                   class="form-control"
-                                   id="password"
-                                   th:field="*{password}"
-                                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
-                                   placeholder="Tối thiểu 6 ký tự"
-                                   required>
-                            <button class="btn btn-outline-secondary" type="button" id="togglePassBtn">
-                                <i class="bi bi-eye" id="togglePassIcon"></i>
-                            </button>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-                        </div>
-                    </div>
-
-                    <!-- Xác nhận mật khẩu -->
-                    <div class="mb-3">
-                        <label for="confirmPassword" class="form-label fw-semibold text-secondary small">Xác nhận mật khẩu <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-check2-circle"></i></span>
-                            <input type="password"
-                                   class="form-control"
-                                   id="confirmPassword"
-                                   th:field="*{confirmPassword}"
-                                   th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
-                                   placeholder="Nhập lại mật khẩu"
-                                   required>
-                            <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassBtn">
-                                <i class="bi bi-eye" id="toggleConfirmPassIcon"></i>
-                            </button>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
-                        </div>
+                <!-- Footer Links -->
+                <div class="text-center mt-4">
+                    <span class="text-secondary small">Đã có tài khoản? </span>
+                    <a th:href="@{/login}" class="text-decoration-none fw-bold text-primary small">
+                        <i class="bi bi-box-arrow-in-right"></i> Đăng nhập ngay
+                    </a>
+                    <div class="mt-2">
+                        <a th:href="@{/}" class="text-decoration-none text-muted small">
+                            <i class="bi bi-arrow-left"></i> Quay lại trang chủ
+                        </a>
                     </div>
                 </div>
-
-                <!-- Cột 2: Thông tin cá nhân & Giấy phép lái xe -->
-                <div class="col-12 col-md-6">
-                    <div class="form-section-title">
-                        <i class="bi bi-person-lines-fill text-primary"></i>
-                        <span>2. Thông Tin Khách Hàng & GPLX</span>
-                    </div>
-
-                    <!-- Họ và tên -->
-                    <div class="mb-3">
-                        <label for="fullName" class="form-label fw-semibold text-secondary small">Họ và tên <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-person"></i></span>
-                            <input type="text"
-                                   class="form-control"
-                                   id="fullName"
-                                   th:field="*{fullName}"
-                                   th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
-                                   placeholder="vd: Nguyễn Văn A"
-                                   required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
-                        </div>
-                    </div>
-
-                    <!-- Số điện thoại -->
-                    <div class="mb-3">
-                        <label for="mobile" class="form-label fw-semibold text-secondary small">Số điện thoại <span class="text-danger">*</span></label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                            <input type="tel"
-                                   class="form-control"
-                                   id="mobile"
-                                   th:field="*{mobile}"
-                                   th:classappend="${#fields.hasErrors('mobile')} ? 'is-invalid' : ''"
-                                   placeholder="vd: 0912345678"
-                                   required>
-                            <div class="invalid-feedback" th:if="${#fields.hasErrors('mobile')}" th:errors="*{mobile}"></div>
-                        </div>
-                    </div>
-
-                    <div class="row g-2">
-                        <!-- Ngày sinh -->
-                        <div class="col-sm-6 mb-3">
-                            <label for="birthday" class="form-label fw-semibold text-secondary small">Ngày sinh <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
-                                <input type="date"
-                                       class="form-control"
-                                       id="birthday"
-                                       th:field="*{birthday}"
-                                       th:classappend="${#fields.hasErrors('birthday')} ? 'is-invalid' : ''"
-                                       required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></div>
-                            </div>
-                        </div>
-
-                        <!-- Số CCCD/CMND -->
-                        <div class="col-sm-6 mb-3">
-                            <label for="identityCard" class="form-label fw-semibold text-secondary small">Số CCCD/CMND <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-card-text"></i></span>
-                                <input type="text"
-                                       class="form-control"
-                                       id="identityCard"
-                                       th:field="*{identityCard}"
-                                       th:classappend="${#fields.hasErrors('identityCard')} ? 'is-invalid' : ''"
-                                       placeholder="12 chữ số"
-                                       required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('identityCard')}" th:errors="*{identityCard}"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row g-2">
-                        <!-- Số GPLX -->
-                        <div class="col-sm-6 mb-3">
-                            <label for="licenceNumber" class="form-label fw-semibold text-secondary small">Số GPLX <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-award"></i></span>
-                                <input type="text"
-                                       class="form-control"
-                                       id="licenceNumber"
-                                       th:field="*{licenceNumber}"
-                                       th:classappend="${#fields.hasErrors('licenceNumber')} ? 'is-invalid' : ''"
-                                       placeholder="Số giấy phép lái xe"
-                                       required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('licenceNumber')}" th:errors="*{licenceNumber}"></div>
-                            </div>
-                        </div>
-
-                        <!-- Ngày cấp GPLX -->
-                        <div class="col-sm-6 mb-3">
-                            <label for="licenceDate" class="form-label fw-semibold text-secondary small">Ngày cấp GPLX <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-calendar-check"></i></span>
-                                <input type="date"
-                                       class="form-control"
-                                       id="licenceDate"
-                                       th:field="*{licenceDate}"
-                                       th:classappend="${#fields.hasErrors('licenceDate')} ? 'is-invalid' : ''"
-                                       required>
-                                <div class="invalid-feedback" th:if="${#fields.hasErrors('licenceDate')}" th:errors="*{licenceDate}"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="d-grid mt-4">
-                <button type="submit" class="btn btn-register-custom text-white rounded-3 fs-6">
-                    <i class="bi bi-person-plus-fill me-1"></i> Hoàn Tất Đăng Ký Tài Khoản
-                </button>
-            </div>
-        </form>
-
-        <!-- Footer Links -->
-        <div class="text-center mt-4">
-            <span class="text-secondary small">Đã có tài khoản? </span>
-            <a th:href="@{/login}" class="text-decoration-none fw-bold text-primary small">
-                <i class="bi bi-box-arrow-in-right"></i> Đăng nhập ngay
-            </a>
-            <div class="mt-2">
-                <a th:href="@{/}" class="text-decoration-none text-muted small">
-                    <i class="bi bi-arrow-left"></i> Quay lại trang chủ
-                </a>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Bootstrap 5 JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function setupPasswordToggle(btnId, inputId, iconId) {
-        const btn = document.getElementById(btnId);
-        const input = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
-        if (btn && input && icon) {
-            btn.addEventListener('click', function () {
-                const isPassword = input.getAttribute('type') === 'password';
-                input.setAttribute('type', isPassword ? 'text' : 'password');
-                icon.classList.toggle('bi-eye', !isPassword);
-                icon.classList.toggle('bi-eye-slash', isPassword);
-            });
-        }
-    }
-    setupPasswordToggle('togglePassBtn', 'password', 'togglePassIcon');
-    setupPasswordToggle('toggleConfirmPassBtn', 'confirmPassword', 'toggleConfirmPassIcon');
-</script>
+    <th:block id="page-scripts">
+        <script>
+            function setupPasswordToggle(btnId, inputId, iconId) {
+                const btn = document.getElementById(btnId);
+                const input = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
+                if (btn && input && icon) {
+                    btn.addEventListener('click', function () {
+                        const isPassword = input.getAttribute('type') === 'password';
+                        input.setAttribute('type', isPassword ? 'text' : 'password');
+                        icon.classList.toggle('bi-eye', !isPassword);
+                        icon.classList.toggle('bi-eye-slash', isPassword);
+                    });
+                }
+            }
+            setupPasswordToggle('togglePassBtn', 'password', 'togglePassIcon');
+            setupPasswordToggle('toggleConfirmPassBtn', 'confirmPassword', 'toggleConfirmPassIcon');
+        </script>
+    </th:block>
+
 </body>
+
 </html>
