@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#main-content}, ~{::#page-css}, ~{::#page-scripts})}">
+<head>
+    <title>Lịch Sử Thuê Xe - FU Car Renting</title>
+    <th:block id="page-css">
+        <style>
+            .stat-card {
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 1rem;
+                padding: 1.5rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+                transition: transform 0.2s ease;
+            }
+            .stat-card:hover {
+                transform: translateY(-3px);
+            }
+            .stat-icon {
+                width: 48px;
+                height: 48px;
+                border-radius: 0.75rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+            }
+            .badge-rental-ACTIVE {
+                background-color: #dcfce7;
+                color: #15803d;
+                border: 1px solid #bbf7d0;
+            }
+            .badge-rental-COMPLETED {
+                background-color: #e0f2fe;
+                color: #0369a1;
+                border: 1px solid #bae6fd;
+            }
+            .badge-rental-CANCELED {
+                background-color: #fee2e2;
+                color: #b91c1c;
+                border: 1px solid #fecaca;
+            }
+            .table-history thead th {
+                background-color: #f8fafc;
+                color: #475569;
+                font-weight: 700;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                padding: 1rem;
+                border-bottom: 2px solid #e2e8f0;
+            }
+            .table-history tbody td {
+                padding: 1rem;
+                vertical-align: middle;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<div id="main-content" class="container py-4">
+    <!-- Breadcrumb & Title -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Trang chủ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Lịch sử thuê xe</li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold text-dark mb-0">Lịch Sử Giao Dịch Thuê Xe Của Tôi</h3>
+        </div>
+        <div>
+            <a th:href="@{/rentals/new}" class="btn btn-primary fw-semibold shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Thuê Thêm Xe
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Tổng đơn -->
+        <div class="col-12 col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-semibold">Tổng Số Giao Dịch</div>
+                    <h4 class="fw-bold mb-0 text-dark" th:text="${totalRentals}">0</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Đang hoạt động -->
+        <div class="col-12 col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-success-subtle text-success">
+                    <i class="bi bi-car-front-fill"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-semibold">Đơn Thuê Đang Hoạt Động</div>
+                    <h4 class="fw-bold mb-0 text-success" th:text="${activeRentals}">0</h4>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tổng chi tiêu -->
+        <div class="col-12 col-md-4">
+            <div class="stat-card d-flex align-items-center gap-3">
+                <div class="stat-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <div>
+                    <div class="text-muted small fw-semibold">Tổng Chi Phí Đã Thuê</div>
+                    <h4 class="fw-bold mb-0 text-danger"
+                        th:text="${#numbers.formatDecimal(totalSpent, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                        0 đ
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                <i class="bi bi-clock-history text-primary"></i>
+                <span>Danh Sách Các Hợp Đồng Thuê Xe</span>
+            </h6>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-history align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 70px;">Mã Đơn</th>
+                            <th>Thông Tin Xe</th>
+                            <th>Ngày Nhận</th>
+                            <th>Ngày Trả</th>
+                            <th class="text-center">Số Ngày</th>
+                            <th class="text-end">Tổng Tiền</th>
+                            <th class="text-center">Trạng Thái</th>
+                            <th class="text-end" style="width: 140px;">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="r : ${rentals}">
+                            <td class="text-center fw-bold text-secondary" th:text="'#' + ${r.carRentId}">#1</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="p-2 bg-light rounded text-primary d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                        <i class="bi bi-car-front-fill fs-4"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark" th:text="${r.carName}">Toyota Camry</div>
+                                        <div class="small text-muted">
+                                            <span class="badge bg-light text-secondary border me-1" th:text="${r.producerName}">Toyota</span>
+                                            <span class="me-1"><i class="bi bi-people me-1"></i><span th:text="${r.capacity}">5</span> chỗ</span>
+                                            <span>• Màu <span th:text="${r.color}">Trắng</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-dark">
+                                    <i class="bi bi-calendar-event text-primary me-1"></i>
+                                    <span th:text="${#temporals.format(r.pickupDate, 'dd/MM/yyyy')}">01/01/2026</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-dark">
+                                    <i class="bi bi-calendar-check text-success me-1"></i>
+                                    <span th:text="${#temporals.format(r.returnDate, 'dd/MM/yyyy')}">05/01/2026</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-dark border px-2 py-1" th:text="${r.totalDays} + ' ngày'">
+                                    4 ngày
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <span class="fw-bold text-danger fs-6"
+                                      th:text="${#numbers.formatDecimal(r.rentPrice, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    3,200,000 đ
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge px-3 py-2 rounded-pill fw-semibold"
+                                      th:classappend="'badge-rental-' + ${r.status.name()}"
+                                      th:text="${r.status.name() == 'ACTIVE' ? 'Đang Thuê' : (r.status.name() == 'COMPLETED' ? 'Hoàn Thành' : 'Đã Hủy')}">
+                                    Đang Thuê
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-1">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-info"
+                                            data-bs-toggle="modal"
+                                            th:data-bs-target="'#detailModal-' + ${r.carRentId}"
+                                            title="Xem chi tiết hợp đồng">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+
+                                    <!-- Nút Hủy Đơn (Nếu canCancel) -->
+                                    <button th:if="${r.canCancel}"
+                                            type="button"
+                                            class="btn btn-sm btn-outline-danger"
+                                            data-bs-toggle="modal"
+                                            th:data-bs-target="'#cancelModal-' + ${r.carRentId}"
+                                            title="Hủy đơn thuê xe">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- Empty State -->
+                        <tr th:if="${#lists.isEmpty(rentals)}">
+                            <td colspan="8" class="text-center py-5">
+                                <div class="text-muted">
+                                    <i class="bi bi-journal-x display-3 d-block mb-3 opacity-50"></i>
+                                    <h5>Bạn Chưa Có Giao Dịch Thuê Xe Nào</h5>
+                                    <p class="small mb-3">Khám phá danh sách các dòng xe đời mới và đặt thuê xe trực tuyến ngay hôm nay!</p>
+                                    <a th:href="@{/}" class="btn btn-primary px-4 rounded-pill">
+                                        <i class="bi bi-car-front me-1"></i> Khám Phá Xe Ngay
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals Container (Đặt ngoài table và ngoài card có overflow/transform để tránh xung đột stacking context & nhấp nháy UI) -->
+    <th:block th:each="r : ${rentals}">
+        <!-- Modal Chi Tiết Hợp Đồng -->
+        <div class="modal fade" th:id="'detailModal-' + ${r.carRentId}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-dark text-white">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-file-earmark-text text-warning me-2"></i>
+                            Hợp Đồng Thuê Xe #<span th:text="${r.carRentId}">1</span>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-start p-4">
+                        <div class="mb-3 text-center p-3 bg-light rounded-3">
+                            <span class="badge px-3 py-2 rounded-pill fw-bold fs-6 mb-2"
+                                  th:classappend="'badge-rental-' + ${r.status.name()}"
+                                  th:text="${r.status.name() == 'ACTIVE' ? 'Hợp Đồng Đang Có Hiệu Lực (ACTIVE)' : (r.status.name() == 'COMPLETED' ? 'Hợp Đồng Đã Hoàn Thành (COMPLETED)' : 'Hợp Đồng Đã Bị Hủy (CANCELED)')}">
+                            </span>
+                            <h5 class="fw-bold text-dark mb-0" th:text="${r.carName}">Toyota Camry</h5>
+                            <small class="text-muted" th:text="${r.producerName} + ' • ' + ${r.carModelYear} + ' • ' + ${r.capacity} + ' chỗ'"></small>
+                        </div>
+
+                        <table class="table table-sm table-borderless">
+                            <tbody>
+                                <tr>
+                                    <td class="text-muted">Người đặt xe:</td>
+                                    <td class="fw-semibold text-dark" th:text="${r.customerName}">Nguyễn Văn An</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Số điện thoại:</td>
+                                    <td class="fw-semibold text-dark" th:text="${r.customerMobile}">0987654321</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Ngày nhận xe:</td>
+                                    <td class="fw-semibold text-primary" th:text="${#temporals.format(r.pickupDate, 'dd/MM/yyyy')}">01/01/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Ngày hoàn trả:</td>
+                                    <td class="fw-semibold text-success" th:text="${#temporals.format(r.returnDate, 'dd/MM/yyyy')}">05/01/2026</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-muted">Tổng thời gian:</td>
+                                    <td class="fw-semibold text-dark" th:text="${r.totalDays} + ' ngày'">4 ngày</td>
+                                </tr>
+                                <tr class="border-top">
+                                    <td class="text-muted pt-2">Tổng chi phí:</td>
+                                    <td class="fw-bold text-danger fs-5 pt-2"
+                                        th:text="${#numbers.formatDecimal(r.rentPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                        3,200,000 VNĐ
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Xác Nhận Hủy Đơn -->
+        <div th:if="${r.canCancel}" class="modal fade" th:id="'cancelModal-' + ${r.carRentId}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title text-danger fw-bold">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Xác Nhận Hủy Đơn Thuê
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-start py-3">
+                        <p class="mb-1">Bạn có chắc chắn muốn hủy đơn thuê xe:</p>
+                        <p class="fw-bold text-dark fs-6 mb-2" th:text="${r.carName} + ' (Hợp đồng #' + ${r.carRentId} + ')'"></p>
+                        <p class="text-danger small mb-0">
+                            <i class="bi bi-info-circle me-1"></i> Sau khi hủy, phương tiện sẽ được hoàn trả về trạng thái sẵn sàng để khách hàng khác thuê.
+                        </p>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Không hủy</button>
+                        <form th:action="@{/my-rentals/{id}/cancel(id=${r.carRentId})}" method="post">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-x-circle-fill me-1"></i> Xác Nhận Hủy
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+
+</div>
+
+<th:block id="page-scripts">
+</th:block>
+</body>
+</html>
+
