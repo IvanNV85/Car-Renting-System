@@ -106,7 +106,7 @@
                                         th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
                                         placeholder="vd: an@gmail.com" required>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}"
-                                        th:errors="*{email}"></div>
+                                        th:text="${#fields.errors('email')[0]}"></div>
                                 </div>
                             </div>
 
@@ -123,7 +123,7 @@
                                         <i class="bi bi-eye" id="togglePassIcon"></i>
                                     </button>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}"
-                                        th:errors="*{password}"></div>
+                                        th:text="${#fields.errors('password')[0]}"></div>
                                 </div>
                             </div>
 
@@ -141,7 +141,7 @@
                                         <i class="bi bi-eye" id="toggleConfirmPassIcon"></i>
                                     </button>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}"
-                                        th:errors="*{confirmPassword}"></div>
+                                        th:text="${#fields.errors('confirmPassword')[0]}"></div>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +163,7 @@
                                         th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
                                         placeholder="vd: Nguyễn Văn A" required>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}"
-                                        th:errors="*{fullName}"></div>
+                                        th:text="${#fields.errors('fullName')[0]}"></div>
                                 </div>
                             </div>
 
@@ -177,7 +177,7 @@
                                         th:classappend="${#fields.hasErrors('mobile')} ? 'is-invalid' : ''"
                                         placeholder="vd: 0912345678" required>
                                     <div class="invalid-feedback" th:if="${#fields.hasErrors('mobile')}"
-                                        th:errors="*{mobile}"></div>
+                                        th:text="${#fields.errors('mobile')[0]}"></div>
                                 </div>
                             </div>
 
@@ -192,7 +192,7 @@
                                             th:classappend="${#fields.hasErrors('birthday')} ? 'is-invalid' : ''"
                                             required>
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('birthday')}"
-                                            th:errors="*{birthday}"></div>
+                                            th:text="${#fields.errors('birthday')[0]}"></div>
                                     </div>
                                 </div>
 
@@ -207,7 +207,7 @@
                                             th:classappend="${#fields.hasErrors('identityCard')} ? 'is-invalid' : ''"
                                             placeholder="12 chữ số" required>
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('identityCard')}"
-                                            th:errors="*{identityCard}"></div>
+                                            th:text="${#fields.errors('identityCard')[0]}"></div>
                                     </div>
                                 </div>
                             </div>
@@ -224,7 +224,7 @@
                                             th:classappend="${#fields.hasErrors('licenceNumber')} ? 'is-invalid' : ''"
                                             placeholder="Số giấy phép lái xe" required>
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('licenceNumber')}"
-                                            th:errors="*{licenceNumber}"></div>
+                                            th:text="${#fields.errors('licenceNumber')[0]}"></div>
                                     </div>
                                 </div>
 
@@ -239,7 +239,7 @@
                                             th:classappend="${#fields.hasErrors('licenceDate')} ? 'is-invalid' : ''"
                                             required>
                                         <div class="invalid-feedback" th:if="${#fields.hasErrors('licenceDate')}"
-                                            th:errors="*{licenceDate}"></div>
+                                            th:text="${#fields.errors('licenceDate')[0]}"></div>
                                     </div>
                                 </div>
                             </div>
