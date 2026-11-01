@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/admin :: layout(~{::title}, ~{::#main-content}, ~{::#page-css}, ~{::#page-scripts})}">
+<head>
+    <title th:text="${isEdit} ? 'Chỉnh Sửa Xe - Quản Trị Hệ Thống' : 'Thêm Xe Mới - Quản Trị Hệ Thống'">Quản Lý Xe</title>
+    <th:block id="page-css">
+        <style>
+            .form-section-title {
+                font-size: 0.95rem;
+                font-weight: 700;
+                color: #1e293b;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid #e2e8f0;
+                margin-bottom: 1.25rem;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<div id="main-content">
+    <!-- Breadcrumb & Header -->
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a th:href="@{/admin/cars}" class="text-decoration-none">Đội xe</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${isEdit} ? 'Chỉnh sửa xe' : 'Thêm mới'">Thêm mới</li>
+            </ol>
+        </nav>
+        <h4 class="fw-bold mb-0" th:text="${isEdit} ? 'Cập Nhật Thông Tin Xe' : 'Thêm Phương Tiện Mới'">Thêm Phương Tiện Mới</h4>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card card-custom">
+                <div class="card-body p-4 p-md-5">
+                    <form th:action="${isEdit} ? @{/admin/cars/{id}/edit(id=${carId})} : @{/admin/cars/new}"
+                          th:object="${carRequest}"
+                          method="post"
+                          novalidate>
+
+                        <!-- Section: Thông tin định danh & Model -->
+                        <div class="form-section-title">
+                            <i class="bi bi-car-front-fill text-primary"></i>
+                            <span>1. Thông Tin Nhận Diện Phương Tiện</span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Tên xe -->
+                            <div class="col-md-8">
+                                <label for="carName" class="form-label fw-semibold text-secondary small">
+                                    Tên Xe / Mẫu Xe <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-card-text"></i></span>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="carName"
+                                           th:field="*{carName}"
+                                           th:classappend="${#fields.hasErrors('carName')} ? 'is-invalid' : ''"
+                                           placeholder="vd: Toyota Camry 2.5Q, Mazda CX-5..."
+                                           required>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('carName')}"
+                                         th:text="${#fields.errors('carName')[0]}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Hãng sản xuất -->
+                            <div class="col-md-4">
+                                <label for="producerId" class="form-label fw-semibold text-secondary small">
+                                    Hãng Sản Xuất <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select"
+                                        id="producerId"
+                                        th:field="*{producerId}"
+                                        th:classappend="${#fields.hasErrors('producerId')} ? 'is-invalid' : ''"
+                                        required>
+                                    <option value="">-- Chọn hãng xe --</option>
+                                    <option th:each="p : ${producers}"
+                                            th:value="${p.producerId}"
+                                            th:text="${p.producerName}">
+                                        Toyota
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('producerId')}"
+                                     th:text="${#fields.errors('producerId')[0]}"></div>
+                            </div>
+
+                            <!-- Năm sản xuất -->
+                            <div class="col-md-4">
+                                <label for="carModelYear" class="form-label fw-semibold text-secondary small">
+                                    Năm Sản Xuất <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar"></i></span>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="carModelYear"
+                                           th:field="*{carModelYear}"
+                                           th:classappend="${#fields.hasErrors('carModelYear')} ? 'is-invalid' : ''"
+                                           placeholder="vd: 2023"
+                                           min="1980" max="2100"
+                                           required>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('carModelYear')}"
+                                         th:text="${#fields.errors('carModelYear')[0]}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Màu sắc -->
+                            <div class="col-md-4">
+                                <label for="color" class="form-label fw-semibold text-secondary small">
+                                    Màu Sắc <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-palette"></i></span>
+                                    <input type="text"
+                                           class="form-control"
+                                           id="color"
+                                           th:field="*{color}"
+                                           th:classappend="${#fields.hasErrors('color')} ? 'is-invalid' : ''"
+                                           placeholder="vd: Trắng, Đen, Xám..."
+                                           required>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('color')}"
+                                         th:text="${#fields.errors('color')[0]}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Số chỗ ngồi -->
+                            <div class="col-md-4">
+                                <label for="capacity" class="form-label fw-semibold text-secondary small">
+                                    Số Chỗ Ngồi <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-people"></i></span>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="capacity"
+                                           th:field="*{capacity}"
+                                           th:classappend="${#fields.hasErrors('capacity')} ? 'is-invalid' : ''"
+                                           placeholder="vd: 4, 5, 7"
+                                           min="2" max="100"
+                                           required>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('capacity')}"
+                                         th:text="${#fields.errors('capacity')[0]}"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section: Giá cả & Trạng thái kinh doanh -->
+                        <div class="form-section-title">
+                            <i class="bi bi-currency-dollar text-success"></i>
+                            <span>2. Giá Cả & Tình Trạng Quản Lý</span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <!-- Giá thuê / ngày -->
+                            <div class="col-md-4">
+                                <label for="rentPrice" class="form-label fw-semibold text-secondary small">
+                                    Giá Thuê Theo Ngày (VNĐ) <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-cash-stack"></i></span>
+                                    <input type="number"
+                                           class="form-control"
+                                           id="rentPrice"
+                                           th:field="*{rentPrice}"
+                                           th:classappend="${#fields.hasErrors('rentPrice')} ? 'is-invalid' : ''"
+                                           placeholder="vd: 800000"
+                                           min="0" step="10000"
+                                           required>
+                                    <span class="input-group-text bg-light text-muted">đ</span>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('rentPrice')}"
+                                         th:text="${#fields.errors('rentPrice')[0]}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Ngày nhập xe -->
+                            <div class="col-md-4">
+                                <label for="importDate" class="form-label fw-semibold text-secondary small">
+                                    Ngày Nhập Xe <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar-check"></i></span>
+                                    <input type="date"
+                                           class="form-control"
+                                           id="importDate"
+                                           th:field="*{importDate}"
+                                           th:classappend="${#fields.hasErrors('importDate')} ? 'is-invalid' : ''"
+                                           required>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('importDate')}"
+                                         th:text="${#fields.errors('importDate')[0]}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Trạng thái -->
+                            <div class="col-md-4">
+                                <label for="status" class="form-label fw-semibold text-secondary small">
+                                    Trạng Thái Hoạt Động <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select"
+                                        id="status"
+                                        th:field="*{status}"
+                                        th:classappend="${#fields.hasErrors('status')} ? 'is-invalid' : ''"
+                                        required>
+                                    <option th:each="st : ${statuses}"
+                                            th:value="${st}"
+                                            th:text="${st.name() == 'AVAILABLE' ? 'Sẵn sàng cho thuê (AVAILABLE)' : (st.name() == 'RENTED' ? 'Đang được thuê (RENTED)' : 'Đang bảo dưỡng (MAINTENANCE)')}">
+                                        AVAILABLE
+                                    </option>
+                                </select>
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('status')}"
+                                     th:text="${#fields.errors('status')[0]}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Mô tả chi tiết -->
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-semibold text-secondary small">
+                                Mô Tả Chi Tiết / Tiện Nghi Kèm Theo
+                            </label>
+                            <textarea class="form-control"
+                                      id="description"
+                                      rows="4"
+                                      th:field="*{description}"
+                                      th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                                      placeholder="Mô tả trang bị an toàn, camera 360, cảm biến lùi, cửa sổ trời..."></textarea>
+                            <div class="invalid-feedback"
+                                 th:if="${#fields.hasErrors('description')}"
+                                 th:text="${#fields.errors('description')[0]}"></div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a th:href="@{/admin/cars}" class="btn btn-outline-secondary px-4">
+                                Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                                <i class="bi bi-save me-1"></i>
+                                <span th:text="${isEdit} ? 'Lưu Thay Đổi' : 'Thêm Xe Mới'">Lưu</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="page-scripts">
+</th:block>
+</body>
+</html>
+
