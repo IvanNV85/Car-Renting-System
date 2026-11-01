@@ -8,27 +8,107 @@
             .hero-section {
                 background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
                 color: #ffffff;
-                padding: 5rem 1rem;
+                padding: 4.5rem 1rem 4rem;
                 text-align: center;
             }
-            .feature-card {
-                border: none;
-                border-radius: 1rem;
-                transition: transform 0.2s, box-shadow 0.2s;
+            .section-header-banner {
+                background: linear-gradient(90deg, #1e293b 0%, #334155 100%);
+                color: #ffffff;
+                padding: 1.25rem 2rem;
+                border-radius: 0.75rem;
+                margin-bottom: 2rem;
+            }
+            .car-catalog-card {
                 background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 0.85rem;
+                overflow: hidden;
+                transition: transform 0.25s ease, box-shadow 0.25s ease;
+                display: flex;
+                flex-direction: column;
+                height: 100%;
             }
-            .feature-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 12px 25px rgba(0, 0, 0, 0.08);
+            .car-catalog-card:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 16px 32px rgba(15, 23, 42, 0.1);
+                border-color: #cbd5e1;
             }
-            .icon-wrapper {
-                width: 70px;
-                height: 70px;
-                border-radius: 50%;
-                display: inline-flex;
+            .car-card-img-wrapper {
+                height: 190px;
+                background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+                display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-bottom: 1.25rem;
+                position: relative;
+                overflow: hidden;
+            }
+            .car-card-img-wrapper .car-icon-visual {
+                font-size: 5rem;
+                color: #64748b;
+                transition: transform 0.3s ease;
+            }
+            .car-catalog-card:hover .car-card-img-wrapper .car-icon-visual {
+                transform: scale(1.08);
+                color: #2563eb;
+            }
+            .car-badge-status {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                padding: 0.35rem 0.75rem;
+                font-size: 0.75rem;
+                font-weight: 700;
+                border-radius: 2rem;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            }
+            .badge-status-AVAILABLE {
+                background-color: #10b981;
+                color: #ffffff;
+            }
+            .badge-status-RENTED {
+                background-color: #f59e0b;
+                color: #ffffff;
+            }
+            .badge-status-MAINTENANCE {
+                background-color: #64748b;
+                color: #ffffff;
+            }
+            .btn-rent-action {
+                background-color: #059669;
+                border-color: #059669;
+                color: #ffffff;
+                font-weight: 700;
+                font-size: 0.85rem;
+                letter-spacing: 0.03em;
+                padding: 0.65rem 0.75rem;
+                transition: background-color 0.15s ease;
+            }
+            .btn-rent-action:hover {
+                background-color: #047857;
+                border-color: #047857;
+                color: #ffffff;
+            }
+            .btn-detail-action {
+                background-color: #f59e0b;
+                border-color: #f59e0b;
+                color: #ffffff;
+                font-weight: 700;
+                font-size: 0.85rem;
+                letter-spacing: 0.03em;
+                padding: 0.65rem 0.75rem;
+                transition: background-color 0.15s ease;
+            }
+            .btn-detail-action:hover {
+                background-color: #d97706;
+                border-color: #d97706;
+                color: #ffffff;
+            }
+            .car-spec-item {
+                font-size: 0.82rem;
+                color: #475569;
+                display: flex;
+                align-items: center;
+                gap: 5px;
             }
         </style>
     </th:block>
@@ -38,83 +118,263 @@
 <div id="main-content">
     <!-- Hero Section -->
     <div class="hero-section">
-        <div class="container py-4">
+        <div class="container py-3">
             <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill mb-3 fw-semibold">
                 <i class="bi bi-shield-check me-1"></i> Dịch Vụ Cho Thuê Xe Uy Tín Hàng Đầu
             </span>
-            <h1 class="display-5 fw-bold mb-3" th:text="${message}">Chào mừng đến với FU Car Renting System</h1>
-            <p class="lead text-white-50 mx-auto" style="max-width: 720px;">
+            <h1 class="display-5 fw-bold mb-3" th:text="${message}">Hệ Thống Thuê Xe - FU Car Renting System</h1>
+            <p class="lead text-white-50 mx-auto mb-0" style="max-width: 720px;">
                 Hệ thống đặt xe ô tô trực tuyến chất lượng cao, linh hoạt và an toàn. Khám phá các mẫu xe đời mới cùng nhiều ưu đãi hấp dẫn ngay hôm nay.
             </p>
-
-            <div class="mt-4 d-flex justify-content-center gap-3 flex-wrap">
-                <!-- Khi chưa đăng nhập -->
-                <div sec:authorize="!isAuthenticated()" class="d-flex gap-3 flex-wrap">
-                    <a th:href="@{/register}" class="btn btn-primary btn-lg px-4 rounded-pill shadow">
-                        <i class="bi bi-pencil-square me-1"></i> Đăng Ký Ngay
-                    </a>
-                    <a th:href="@{/login}" class="btn btn-outline-light btn-lg px-4 rounded-pill">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Đăng Nhập
-                    </a>
-                </div>
-
-                <!-- Khi đã đăng nhập -->
-                <div sec:authorize="isAuthenticated()" class="d-flex gap-3 flex-wrap">
-                    <a th:href="@{/}" class="btn btn-primary btn-lg px-4 rounded-pill shadow">
-                        <i class="bi bi-car-front me-1"></i> Khám Phá Danh Sách Xe
-                    </a>
-                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/cars}" class="btn btn-outline-warning btn-lg px-4 rounded-pill">
-                        <i class="bi bi-gear-fill me-1"></i> Quản Trị Hệ Thống
-                    </a>
-                    <a sec:authorize="hasRole('CUSTOMER')" th:href="@{/profile}" class="btn btn-outline-light btn-lg px-4 rounded-pill">
-                        <i class="bi bi-person-fill me-1"></i> Xem Hồ Sơ Cá Nhân
-                    </a>
-                </div>
-            </div>
         </div>
     </div>
 
-    <!-- Features Section -->
-    <div class="container my-5 py-3">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold text-dark">Tại Sao Nên Chọn FU Car Renting?</h2>
-            <p class="text-muted">Chúng tôi cam kết mang lại sự an tâm tuyệt đối và dịch vụ chuẩn mực cho mọi chuyến đi</p>
+    <!-- Car Showcase Section (Theo mẫu Ảnh 2) -->
+    <div id="car-catalog" class="container my-5">
+        <!-- Section Header Banner -->
+        <div class="section-header-banner d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 shadow-sm">
+            <div>
+                <h3 class="fw-bold mb-1 d-flex align-items-center gap-2">
+                    <i class="bi bi-car-front-fill text-warning"></i>
+                    <span>Xe Cho Thuê</span>
+                </h3>
+            </div>
+
+            <!-- Quick Search Bar -->
+            <form th:action="@{/}" method="get" class="d-flex gap-2" style="max-width: 360px; width: 100%;">
+                <div class="input-group">
+                    <input type="text"
+                           name="keyword"
+                           class="form-control border-0"
+                           placeholder="Tìm tên xe, hãng xe..."
+                           th:value="${keyword}">
+                    <button class="btn btn-warning fw-semibold px-3" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+                <a th:if="${keyword != null and !keyword.isEmpty()}" th:href="@{/}" class="btn btn-outline-light">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            </form>
         </div>
 
-        <div class="row g-4 text-center">
-            <div class="col-md-4">
-                <div class="card h-100 p-4 shadow-sm feature-card">
-                    <div>
-                        <div class="icon-wrapper bg-primary-subtle text-primary">
-                            <i class="bi bi-car-front fs-2"></i>
+        <!-- Car Cards Grid -->
+        <div class="row g-4" th:if="${!#lists.isEmpty(cars)}">
+            <div class="col-12 col-md-6 col-lg-4" th:each="car : ${cars}">
+                <div class="car-catalog-card">
+                    <!-- Ảnh & Badge trạng thái -->
+                    <div class="car-card-img-wrapper">
+                        <i class="bi bi-car-front-fill car-icon-visual"></i>
+                        <span class="car-badge-status"
+                              th:classappend="'badge-status-' + ${car.status.name()}"
+                              th:text="${car.status.name() == 'AVAILABLE' ? 'Sẵn sàng' : (car.status.name() == 'RENTED' ? 'Đang thuê' : 'Bảo dưỡng')}">
+                            Sẵn sàng
+                        </span>
+                    </div>
+
+                    <!-- Nội dung thẻ xe -->
+                    <div class="p-3 text-center flex-grow-1 d-flex flex-direction-column flex-column justify-content-between">
+                        <div>
+                            <!-- Tên xe -->
+                            <h5 class="fw-bold text-dark mb-1 text-truncate" th:text="${car.carName}" th:title="${car.carName}">
+                                Toyota Camry
+                            </h5>
+
+                            <!-- Giá thuê -->
+                            <div class="text-danger fw-bold fs-5 mb-2">
+                                <span th:if="${car.rentPrice != null and car.rentPrice > 0}"
+                                      th:text="${#numbers.formatDecimal(car.rentPrice, 0, 'COMMA', 0, 'POINT')} + ' đ / ngày'">
+                                    800,000 đ / ngày
+                                </span>
+                                <span th:unless="${car.rentPrice != null and car.rentPrice > 0}">
+                                    Liên hệ
+                                </span>
+                            </div>
+
+                            <!-- Thông số xe (Đời xe, Số chỗ) -->
+                            <div class="d-flex justify-content-center align-items-center gap-3 py-2 border-top border-bottom border-light-subtle mb-3">
+                                <div class="car-spec-item">
+                                    <i class="bi bi-calendar-event text-success fs-6"></i>
+                                    <span>Đời xe: <strong class="text-dark" th:text="${car.carModelYear}">2022</strong></span>
+                                </div>
+                                <span class="text-muted opacity-50">|</span>
+                                <div class="car-spec-item">
+                                    <i class="bi bi-people-fill text-success fs-6"></i>
+                                    <span>seat: Xe <strong class="text-dark" th:text="${car.capacity}">5</strong> chỗ</span>
+                                </div>
+                            </div>
+
+                            <!-- Thông tin hãng & màu sắc -->
+                            <div class="small text-muted mb-2">
+                                <span class="badge bg-light text-secondary border me-1" th:text="${car.producerName}">Toyota</span>
+                                <span class="badge bg-light text-secondary border text-capitalize" th:text="'Màu: ' + ${car.color}">Màu: Trắng</span>
+                            </div>
                         </div>
                     </div>
-                    <h5 class="fw-bold mb-2">Đa Dạng Dòng Xe</h5>
-                    <p class="text-muted small mb-0">Cung cấp nhiều mẫu xe đời mới từ 4 đến 7 chỗ từ các thương hiệu hàng đầu như Toyota, Honda, Hyundai, Mazda.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 p-4 shadow-sm feature-card">
-                    <div>
-                        <div class="icon-wrapper bg-success-subtle text-success">
-                            <i class="bi bi-clock-history fs-2"></i>
+
+                    <!-- 2 Nút Hành Động Ở Dưới Thẻ (Đặt xe & Chi tiết) -->
+                    <div class="row g-0 border-top">
+                        <!-- Nút 1: ĐẶT XE (Xanh lá) -->
+                        <div class="col-6">
+                            <!-- Trường hợp xe SẴN SÀNG (AVAILABLE) -->
+                            <th:block th:if="${car.status.name() == 'AVAILABLE'}">
+                                <!-- Đã đăng nhập: Chuyển hướng đến luồng đặt xe -->
+                                <a sec:authorize="isAuthenticated()"
+                                   th:href="@{/rentals/new(carId=${car.carId})}"
+                                   class="btn btn-rent-action w-100 rounded-0 rounded-bottom-start d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-cart3 me-1"></i> ĐẶT XE
+                                </a>
+                                <!-- Chưa đăng nhập: Chuyển hướng sang Login -->
+                                <a sec:authorize="!isAuthenticated()"
+                                   th:href="@{/login}"
+                                   class="btn btn-rent-action w-100 rounded-0 rounded-bottom-start d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-cart3 me-1"></i> ĐẶT XE
+                                </a>
+                            </th:block>
+
+                            <!-- Trường hợp xe ĐANG THUÊ (RENTED) - Disabled -->
+                            <button th:if="${car.status.name() == 'RENTED'}"
+                                    class="btn btn-secondary w-100 rounded-0 rounded-bottom-start d-flex align-items-center justify-content-center"
+                                    disabled
+                                    style="font-size: 0.85rem; font-weight: 700; padding: 0.65rem 0.75rem;">
+                                <i class="bi bi-lock-fill me-1"></i> ĐANG THUÊ
+                            </button>
+
+                            <!-- Trường hợp xe BẢO DƯỠNG (MAINTENANCE) - Disabled -->
+                            <button th:if="${car.status.name() == 'MAINTENANCE'}"
+                                    class="btn btn-secondary w-100 rounded-0 rounded-bottom-start d-flex align-items-center justify-content-center"
+                                    disabled
+                                    style="font-size: 0.85rem; font-weight: 700; padding: 0.65rem 0.75rem;">
+                                <i class="bi bi-wrench-adjustable me-1"></i> BẢO DƯỠNG
+                            </button>
+                        </div>
+
+                        <!-- Nút 2: CHI TIẾT (Vàng cam) -->
+                        <div class="col-6">
+                            <button type="button"
+                                    class="btn btn-detail-action w-100 rounded-0 rounded-bottom-end d-flex align-items-center justify-content-center"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="'#carModal-' + ${car.carId}">
+                                <i class="bi bi-eye me-1"></i> CHI TIẾT
+                            </button>
                         </div>
                     </div>
-                    <h5 class="fw-bold mb-2">Đặt Xe Nhanh Chóng</h5>
-                    <p class="text-muted small mb-0">Quy trình đặt và duyệt xe trực tuyến đơn giản, xác nhận lịch trình chỉ trong vài phút.</p>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card h-100 p-4 shadow-sm feature-card">
-                    <div>
-                        <div class="icon-wrapper bg-warning-subtle text-warning">
-                            <i class="bi bi-shield-check fs-2"></i>
+
+                <!-- Modal Popup Xem Chi Tiết Xe Nhanh -->
+                <div class="modal fade" th:id="'carModal-' + ${car.carId}" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header bg-dark text-white">
+                                <h5 class="modal-title fw-bold d-flex align-items-center gap-2">
+                                    <i class="bi bi-car-front-fill text-warning"></i>
+                                    <span th:text="${car.carName}">Tên Xe</span>
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="row g-4 align-items-center">
+                                    <div class="col-md-5 text-center">
+                                        <div class="p-4 bg-light rounded-3 d-flex flex-column align-items-center justify-content-center" style="min-height: 220px;">
+                                            <i class="bi bi-car-front-fill display-1 text-primary mb-2"></i>
+                                            <span class="badge px-3 py-2 rounded-pill fw-bold"
+                                                  th:classappend="'badge-status-' + ${car.status.name()}"
+                                                  th:text="${car.status.name() == 'AVAILABLE' ? 'Sẵn sàng phục vụ' : (car.status.name() == 'RENTED' ? 'Hiện đang cho thuê' : 'Đang bảo dưỡng định kỳ')}">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div class="text-danger fw-bold fs-4 mb-3"
+                                             th:text="${car.rentPrice != null and car.rentPrice > 0} ? ${#numbers.formatDecimal(car.rentPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ / Ngày' : 'Giá thuê: Liên hệ'">
+                                            800,000 VNĐ / Ngày
+                                        </div>
+
+                                        <table class="table table-sm table-borderless mb-3">
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-muted" style="width: 140px;">Hãng sản xuất:</td>
+                                                    <td class="fw-semibold text-dark" th:text="${car.producerName}">Toyota</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted">Năm sản xuất:</td>
+                                                    <td class="fw-semibold text-dark" th:text="${car.carModelYear}">2022</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted">Số chỗ ngồi:</td>
+                                                    <td class="fw-semibold text-dark" th:text="${car.capacity} + ' chỗ'">5 chỗ</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-muted">Màu ngoại thất:</td>
+                                                    <td class="fw-semibold text-dark text-capitalize" th:text="${car.color}">Trắng</td>
+                                                </tr>
+                                                <tr th:if="${car.importDate != null}">
+                                                    <td class="text-muted">Ngày nhập xe:</td>
+                                                    <td class="fw-semibold text-dark" th:text="${#dates.format(car.importDate, 'dd/MM/yyyy')}">01/01/2022</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <div th:if="${car.description != null and !car.description.isEmpty()}">
+                                            <h6 class="fw-bold text-dark small mb-1">Mô tả & Trang bị kèm theo:</h6>
+                                            <p class="text-muted small mb-0 p-2 bg-light rounded" th:text="${car.description}"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer bg-light">
+                                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+                                <th:block th:if="${car.status.name() == 'AVAILABLE'}">
+                                    <a sec:authorize="isAuthenticated()"
+                                       th:href="@{/rentals/new(carId=${car.carId})}"
+                                       class="btn btn-success px-4 fw-bold">
+                                        <i class="bi bi-cart3 me-1"></i> Thuê Xe Này Ngay
+                                    </a>
+                                    <a sec:authorize="!isAuthenticated()"
+                                       th:href="@{/login}"
+                                       class="btn btn-success px-4 fw-bold">
+                                        <i class="bi bi-cart3 me-1"></i> Đăng Nhập Để Thuê Xe
+                                    </a>
+                                </th:block>
+                            </div>
                         </div>
                     </div>
-                    <h5 class="fw-bold mb-2">An Toàn & Minh Bạch</h5>
-                    <p class="text-muted small mb-0">Hợp đồng điện tử rõ ràng, giá cả minh bạch không phụ phí ẩn, bảo hiểm và hỗ trợ 24/7.</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Empty State Khi Không Có Xe Nào -->
+        <div class="card border-0 shadow-sm text-center py-5" th:if="${#lists.isEmpty(cars)}">
+            <div class="card-body">
+                <i class="bi bi-car-front display-3 text-muted mb-3 d-block opacity-50"></i>
+                <h4 class="fw-bold text-dark mb-2">Chưa Có Phương Tiện Phù Hợp</h4>
+                <p class="text-muted small mb-3">Hiện tại chưa tìm thấy phương tiện nào theo từ khóa tìm kiếm của bạn.</p>
+                <a th:href="@{/}" class="btn btn-primary px-4 rounded-pill">
+                    <i class="bi bi-arrow-repeat me-1"></i> Xem Tất Cả Xe
+                </a>
+            </div>
+        </div>
+
+        <!-- Phân trang (Nếu có nhiều trang xe) -->
+        <div class="d-flex justify-content-center mt-5" th:if="${totalPages > 1}">
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-md shadow-sm">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                        <a class="page-link" th:href="@{/(page=${currentPage - 1}, keyword=${keyword})}">
+                            <i class="bi bi-chevron-left"></i> Trước
+                        </a>
+                    </li>
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active' : ''">
+                        <a class="page-link" th:href="@{/(page=${i}, keyword=${keyword})}" th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage >= totalPages - 1} ? 'disabled' : ''">
+                        <a class="page-link" th:href="@{/(page=${currentPage + 1}, keyword=${keyword})}">
+                            Sau <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

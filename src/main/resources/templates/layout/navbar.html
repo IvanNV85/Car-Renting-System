@@ -18,9 +18,6 @@
         <div class="collapse navbar-collapse" id="navContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">
-                        <i class="bi bi-house-door me-1"></i> Trang Chủ
-                    </a>
                 </li>
                 <!-- Menu dành riêng cho Admin -->
                 <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
