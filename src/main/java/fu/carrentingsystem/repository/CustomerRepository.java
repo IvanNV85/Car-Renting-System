@@ -16,6 +16,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     Optional<Customer> findByAccount_Email(String email);
 
+    Optional<Customer> findByAccount_AccountName(String accountName);
+
     boolean existsByIdentityCard(String identityCard);
 
     boolean existsByMobile(String mobile);
