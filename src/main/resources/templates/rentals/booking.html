@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/main :: layout(~{::title}, ~{::#main-content}, ~{::#page-css}, ~{::#page-scripts})}">
+<head>
+    <title>Đặt Thuê Xe Trực Tuyến - FU Car Renting</title>
+    <th:block id="page-css">
+        <style>
+            .booking-step-badge {
+                width: 32px;
+                height: 32px;
+                background-color: #2563eb;
+                color: #ffffff;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 0.95rem;
+                margin-right: 0.5rem;
+            }
+            .car-select-item {
+                border: 2px solid #e2e8f0;
+                border-radius: 0.75rem;
+                transition: all 0.2s ease;
+                background: #ffffff;
+                cursor: pointer;
+            }
+            .car-select-item:hover {
+                border-color: #93c5fd;
+                background-color: #f8fafc;
+            }
+            .car-select-item.selected {
+                border-color: #2563eb;
+                background-color: #eff6ff;
+            }
+            .sticky-summary {
+                position: sticky;
+                top: 80px;
+                z-index: 10;
+            }
+            .summary-item-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.4rem 0;
+                font-size: 0.9rem;
+            }
+        </style>
+    </th:block>
+</head>
+<body>
+
+<div id="main-content" class="container py-4">
+    <!-- Breadcrumb & Page Title -->
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Đặt thuê xe trực tuyến</li>
+            </ol>
+        </nav>
+        <h3 class="fw-bold text-dark mb-1">Tạo Giao Dịch Thuê Xe Trực Tuyến</h3>
+        <p class="text-muted small mb-0">Linh hoạt chọn một hoặc nhiều phương tiện phục vụ cho chuyến đi của bạn</p>
+    </div>
+
+    <!-- Booking Form -->
+    <form th:action="@{/rentals/new}" th:object="${bookingRequest}" method="post" id="bookingForm" novalidate>
+        <div class="row g-4">
+            <!-- Left Column: Dates & Car Selection -->
+            <div class="col-12 col-lg-8">
+                <!-- Card 1: Chọn thời gian thuê -->
+                <div class="card card-hover mb-4 shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h6 class="fw-bold mb-0 text-dark d-flex align-items-center">
+                            <span class="booking-step-badge">1</span>
+                            <span>Khoảng Thời Gian Thuê Xe</span>
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="pickupDate" class="form-label fw-semibold text-secondary small">
+                                    Ngày Nhận Xe <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar-event"></i></span>
+                                    <input type="date"
+                                           class="form-control"
+                                           id="pickupDate"
+                                           th:field="*{pickupDate}"
+                                           th:classappend="${#fields.hasErrors('pickupDate')} ? 'is-invalid' : ''"
+                                           required>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('pickupDate')}"
+                                         th:text="${#fields.errors('pickupDate')[0]}"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="returnDate" class="form-label fw-semibold text-secondary small">
+                                    Ngày Trả Xe <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light text-muted"><i class="bi bi-calendar-check"></i></span>
+                                    <input type="date"
+                                           class="form-control"
+                                           id="returnDate"
+                                           th:field="*{returnDate}"
+                                           th:classappend="${#fields.hasErrors('returnDate')} ? 'is-invalid' : ''"
+                                           required>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('returnDate')}"
+                                         th:text="${#fields.errors('returnDate')[0]}"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-light border mt-3 mb-0 small text-muted d-flex align-items-center">
+                            <i class="bi bi-info-circle-fill text-primary me-2 fs-5"></i>
+                            <div>
+                                Theo quy định, ngày trả xe phải sau ngày nhận ít nhất 1 ngày. Thời gian nhận và trả xe sẽ được áp dụng chung cho tất cả các xe trong đơn giao dịch này.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Danh sách xe cho thuê (Chọn 1 hoặc nhiều xe) -->
+                <div class="card card-hover mb-4 shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-dark d-flex align-items-center">
+                            <span class="booking-step-badge">2</span>
+                            <span>Chọn Xe Thuê (Một Hoặc Nhiều Xe)</span>
+                        </h6>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1">
+                            <span th:text="${#lists.size(availableCars)}">0</span> xe sẵn sàng
+                        </span>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="invalid-feedback d-block mb-3"
+                             th:if="${#fields.hasErrors('carIds')}"
+                             th:text="${#fields.errors('carIds')[0]}"></div>
+
+                        <!-- Danh sách các xe có thể thuê -->
+                        <div class="row g-3" th:if="${!#lists.isEmpty(availableCars)}">
+                            <div class="col-12" th:each="car : ${availableCars}">
+                                <div class="car-select-item p-3" th:id="'car-item-' + ${car.carId}">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="form-check m-0">
+                                            <input class="form-check-input car-checkbox fs-5"
+                                                   type="checkbox"
+                                                   name="carIds"
+                                                   th:value="${car.carId}"
+                                                   th:id="'car-' + ${car.carId}"
+                                                   th:checked="${bookingRequest.carIds.contains(car.carId)}"
+                                                   th:data-id="${car.carId}"
+                                                   th:data-name="${car.carName}"
+                                                   th:data-producer="${car.producerName}"
+                                                   th:data-price="${car.rentPrice}">
+                                        </div>
+
+                                        <div class="p-2 bg-light rounded text-primary d-none d-sm-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                            <i class="bi bi-car-front-fill fs-3"></i>
+                                        </div>
+
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center">
+                                                <div>
+                                                    <h6 class="fw-bold text-dark mb-1" th:text="${car.carName}">Toyota Camry</h6>
+                                                    <div class="small text-muted">
+                                                        <span class="badge bg-light text-secondary border me-1" th:text="${car.producerName}">Toyota</span>
+                                                        <span class="me-2"><i class="bi bi-people me-1"></i><span th:text="${car.capacity}">5</span> chỗ</span>
+                                                        <span class="me-2"><i class="bi bi-calendar me-1"></i>Đời <span th:text="${car.carModelYear}">2022</span></span>
+                                                        <span class="text-capitalize"><i class="bi bi-palette me-1"></i>Màu <span th:text="${car.color}">Trắng</span></span>
+                                                    </div>
+                                                </div>
+                                                <div class="text-sm-end mt-2 mt-sm-0">
+                                                    <div class="fw-bold text-danger fs-6"
+                                                         th:text="${#numbers.formatDecimal(car.rentPrice, 0, 'COMMA', 0, 'POINT')} + ' đ/ngày'">
+                                                        800,000 đ/ngày
+                                                    </div>
+                                                    <small class="text-success"><i class="bi bi-check-circle me-1"></i>Sẵn sàng giao</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Khi không có xe khả dụng -->
+                        <div class="text-center py-5 text-muted" th:if="${#lists.isEmpty(availableCars)}">
+                            <i class="bi bi-emoji-frown display-4 d-block mb-3 opacity-50"></i>
+                            <h5>Hiện Không Có Xe Sẵn Sàng Để Thuê</h5>
+                            <p class="small mb-0">Tất cả xe hiện đang trong lịch trình cho thuê hoặc bảo dưỡng. Vui lòng quay lại sau.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Ghi chú thêm -->
+                <div class="card card-hover shadow-sm border-0">
+                    <div class="card-header bg-white py-3 border-bottom">
+                        <h6 class="fw-bold mb-0 text-dark d-flex align-items-center">
+                            <span class="booking-step-badge">3</span>
+                            <span>Ghi Chú Đơn Thuê (Tùy Chọn)</span>
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <textarea class="form-control"
+                                  rows="3"
+                                  th:field="*{note}"
+                                  placeholder="Ghi chú thêm về yêu cầu giao nhận xe, địa chỉ bàn giao hoặc phụ kiện đi kèm..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Booking Summary & Checkout -->
+            <div class="col-12 col-lg-4">
+                <div class="card shadow border-0 sticky-summary">
+                    <div class="card-header bg-dark text-white py-3">
+                        <h5 class="fw-bold mb-0 d-flex align-items-center gap-2">
+                            <i class="bi bi-receipt text-warning"></i>
+                            <span>Tóm Tắt Đơn Thuê</span>
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Thông tin thời gian -->
+                        <div class="mb-3 pb-3 border-bottom">
+                            <small class="text-muted d-block mb-1">Thời gian thuê dự kiến:</small>
+                            <div class="fw-semibold text-dark d-flex justify-content-between">
+                                <span>Nhận: <span id="summary-pickup" class="text-primary">-</span></span>
+                                <span>Trả: <span id="summary-return" class="text-primary">-</span></span>
+                            </div>
+                            <div class="mt-1 text-end">
+                                <span class="badge bg-primary px-3 py-1" id="summary-days-badge">0 ngày</span>
+                            </div>
+                        </div>
+
+                        <!-- Danh sách xe đã chọn -->
+                        <div class="mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small class="text-muted">Phương tiện đã chọn:</small>
+                                <span class="badge bg-secondary" id="summary-car-count">0 xe</span>
+                            </div>
+                            <div id="summary-cars-container" class="small text-muted">
+                                <span class="fst-italic">Chưa có xe nào được chọn</span>
+                            </div>
+                        </div>
+
+                        <!-- Tổng tiền thanh toán -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span class="fw-bold text-dark">Tổng Tiền Thuê:</span>
+                                <span class="fs-4 fw-bold text-danger" id="summary-total-price">0 đ</span>
+                            </div>
+                            <small class="text-muted d-block text-end">Đã bao gồm VAT & Bảo hiểm cơ bản</small>
+                        </div>
+
+                        <!-- Nút hoàn tất đặt xe -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold shadow-sm py-2" id="submitBookingBtn">
+                                <i class="bi bi-check-circle-fill me-1"></i> Xác Nhận Đặt Thuê Xe
+                            </button>
+                            <a th:href="@{/}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i> Quay Lại Trang Chủ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<th:block id="page-scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const pickupInput = document.getElementById('pickupDate');
+            const returnInput = document.getElementById('returnDate');
+            const checkboxes = document.querySelectorAll('.car-checkbox');
+            const summaryPickup = document.getElementById('summary-pickup');
+            const summaryReturn = document.getElementById('summary-return');
+            const summaryDaysBadge = document.getElementById('summary-days-badge');
+            const summaryCarCount = document.getElementById('summary-car-count');
+            const summaryCarsContainer = document.getElementById('summary-cars-container');
+            const summaryTotalPrice = document.getElementById('summary-total-price');
+            const submitBtn = document.getElementById('submitBookingBtn');
+
+            function formatDate(dateStr) {
+                if (!dateStr) return '-';
+                const parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    return parts[2] + '/' + parts[1] + '/' + parts[0];
+                }
+                return dateStr;
+            }
+
+            function calculateDays() {
+                const p = new Date(pickupInput.value);
+                const r = new Date(returnInput.value);
+                if (isNaN(p) || isNaN(r)) return 0;
+                const diffTime = r - p;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays > 0 ? diffDays : 0;
+            }
+
+            function updateSummary() {
+                const days = calculateDays();
+                summaryPickup.textContent = formatDate(pickupInput.value);
+                summaryReturn.textContent = formatDate(returnInput.value);
+                summaryDaysBadge.textContent = days + ' ngày';
+
+                let totalDailyRate = 0;
+                let selectedCars = [];
+
+                checkboxes.forEach(cb => {
+                    const parentItem = document.getElementById('car-item-' + cb.value);
+                    if (cb.checked) {
+                        if (parentItem) parentItem.classList.add('selected');
+                        const price = parseInt(cb.getAttribute('data-price')) || 0;
+                        const name = cb.getAttribute('data-name');
+                        totalDailyRate += price;
+                        selectedCars.push({ name: name, price: price });
+                    } else {
+                        if (parentItem) parentItem.classList.remove('selected');
+                    }
+                });
+
+                summaryCarCount.textContent = selectedCars.length + ' xe';
+
+                if (selectedCars.length === 0) {
+                    summaryCarsContainer.innerHTML = '<span class="text-danger small"><i class="bi bi-exclamation-circle me-1"></i>Vui lòng chọn ít nhất 1 xe</span>';
+                    submitBtn.disabled = true;
+                } else {
+                    let html = '';
+                    selectedCars.forEach(c => {
+                        const subTotal = c.price * (days > 0 ? days : 1);
+                        html += '<div class="summary-item-row">' +
+                                '<span class="text-truncate fw-semibold text-dark" style="max-width: 170px;">' + c.name + '</span>' +
+                                '<span class="fw-semibold text-secondary">' + subTotal.toLocaleString('vi-VN') + ' đ</span>' +
+                                '</div>';
+                    });
+                    summaryCarsContainer.innerHTML = html;
+                    submitBtn.disabled = days <= 0;
+                }
+
+                const grandTotal = totalDailyRate * (days > 0 ? days : 0);
+                summaryTotalPrice.textContent = grandTotal.toLocaleString('vi-VN') + ' đ';
+
+                if (days <= 0 && pickupInput.value && returnInput.value) {
+                    summaryReturn.classList.add('text-danger');
+                } else {
+                    summaryReturn.classList.remove('text-danger');
+                }
+            }
+
+            // Click vào box xe cũng kích hoạt checkbox
+            document.querySelectorAll('.car-select-item').forEach(item => {
+                item.addEventListener('click', function (e) {
+                    if (e.target.tagName !== 'INPUT') {
+                        const cb = this.querySelector('.car-checkbox');
+                        if (cb) {
+                            cb.checked = !cb.checked;
+                            updateSummary();
+                        }
+                    }
+                });
+            });
+
+            pickupInput.addEventListener('change', updateSummary);
+            returnInput.addEventListener('change', updateSummary);
+            checkboxes.forEach(cb => cb.addEventListener('change', updateSummary));
+
+            updateSummary();
+        });
+    </script>
+</th:block>
+</body>
+</html>
+
